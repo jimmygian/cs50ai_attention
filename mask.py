@@ -45,18 +45,10 @@ def get_mask_token_index(mask_token_id, inputs):
     Return the index of the token with the specified `mask_token_id`, or
     `None` if not present in the `inputs`.
     """
-    print()
-    print()
     print(mask_token_id)
     print(inputs.input_ids)
     for i, token_id in enumerate(inputs.input_ids[0]):
-        # print("Token ID at index", i, ":", token_id)    
-        # print("Token:", inputs.tokens()[i])
         if token_id == mask_token_id:
-            # print()
-            # print("Mask token found at index:", i)
-            # print("Token:", inputs.tokens()[i])
-            # print()
             return i
     else:
         return None
@@ -83,13 +75,17 @@ def visualize_attentions(tokens, attentions):
     include both the layer number (starting count from 1) and head number
     (starting count from 1).
     """
-    # TODO: Update this function to produce diagrams for all layers and heads.
-    generate_diagram(
-        1,
-        1,
-        tokens,
-        attentions[0][0][0]
-    )
+    for layer_index, layer in enumerate(attentions):
+        # layer: shape (1, num_heads, seq_len, seq_len)
+        num_heads = layer.shape[1]
+        for head_index in range(num_heads):
+            attention_weights = layer[0][head_index].numpy()
+            generate_diagram(
+                layer_number=layer_index + 1,
+                head_number=head_index + 1,
+                tokens=tokens,
+                attention_weights=attention_weights
+            )
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
